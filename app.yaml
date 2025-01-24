@@ -1,0 +1,28 @@
+runtime: nodejs20  # You can choose nodejs20 if needed
+
+env_variables:
+  NODE_ENV: 'production'
+
+instance_class: F2  # Adjust instance type based on app needs
+
+handlers:
+  - url: /static
+    static_dir: build/static  # Serve static files from React build folder
+  - url: /favicon.ico
+    static_files: build/favicon.ico
+    upload: build/favicon.ico
+  - url: /.*
+    script: auto  # Routes all other requests to Node.js backend
+
+automatic_scaling:
+  min_instances: 1
+  max_instances: 10
+  target_cpu_utilization: 0.65  # Adjust based on app needs
+
+health_check:
+  enable_health_check: true
+  check_interval_sec: 5
+  timeout_sec: 4
+  unhealthy_threshold: 3
+  healthy_threshold: 3
+  restart_threshold: 60
