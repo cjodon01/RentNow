@@ -18,12 +18,17 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Node.js version
-        uses: actions/setup-node@v3
-        with:
-          node-version: '20.x'
+      - name: Install and use NVM to get the latest LTS Node.js
+        run: |
+          curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
+          export NVM_DIR="$HOME/.nvm"
+          [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+          nvm install --lts
+          nvm use --lts
+          node -v
+          npm -v
 
-      - name: npm install, build, and test
+      - name: Install dependencies, build, and test
         run: |
           npm install
           npm run build --if-present
@@ -60,15 +65,14 @@ jobs:
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_BB75AC04C72E4FF888835F9911191248 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_F349894F0FF34BD898F5127797F9E06C }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_521EDFC58CA641A79D2B7CE96D387A51 }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_7560C563F1B64C46A0254C5FD489C969 }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_F42FFAF957944FF28701A166D305DFCC }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_D09BE5387D8A422C98CFAB1B26A61C15 }}
 
-      - name: 'Deploy to Azure Web App'
+      - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
           app-name: 'rentnowwadev'
           slot-name: 'Production'
           package: .
-          
